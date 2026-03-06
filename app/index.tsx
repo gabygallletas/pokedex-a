@@ -1,32 +1,47 @@
 import { useEffect, useState } from "react";
-import { Text, View } from "react-native";
+import { View } from "react-native";
+import PokemonCard from "../components/PokemonCard";
+
+interface Pokemon {
+  name: string;
+  url: string;
+}
 
 export default function Index() {
 
-  const[results, setResults] = useState<any[]>();
+  const [results, setResults] = useState<Pokemon[]>([]);
 
   useEffect(() => {
-    console.log("Entre entre en pantalla")
-    getPokemons()
+    console.log("Entre en pantalla");
+    getPokemons();
   }, []);
 
-  const getPokemons =async () =>  {
-    const URL = "https://pokeapi.co/api/v2/pokemon?limit=100000&offset=0"
-    const response = await fetch(URL, {
-      method: "GET"
-    });
-    console.log(response);
-    const data = await response.json();
-    console.log(data.results)
-    setResults(data.results)
+  const getPokemons = async () => {
+    try {
+      const URL = "https://pokeapi.co/api/v2/pokemon?limit=100&offset=0";
+
+      const response = await fetch(URL);
+      const data = await response.json();
+
+      console.log(data.results);
+
+      setResults(data.results);
+
+    } catch (error) {
+      console.log("Error al obtener pokemons", error);
+    }
   };
-
-
-  return (
-    <View>
-      {results?.map((item)=>{
-        return <Text key={item.name}>{item.name}</Text>;
-      })}
-    </View>
-  );
+return (
+  <View>
+    {results?.map((item) => {
+      return (
+        <PokemonCard
+          key={item.name}
+          name={item.name}
+          url={item.url}
+        />
+      );
+    })}
+  </View>
+);
 }
